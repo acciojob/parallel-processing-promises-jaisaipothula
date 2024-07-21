@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .catch(error => {
         console.error('Error downloading images:', error);
+        outputDiv.innerHTML = `<p>Error downloading images: ${error.message}</p>`;
       });
   });
 });
