@@ -1,45 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
   const imageUrls = [
-    { url: 'https://via.placeholder.com/150', alt: 'Image 1' },
-    { url: 'https://via.placeholder.com/200', alt: 'Image 2' },
-    { url: 'https://via.placeholder.com/250', alt: 'Image 3' }
+    'https://via.placeholder.com/150',
+    'https://picsum.photos/id/237/200/300',
+    'https://via.placeholder.com/200'
     // Add more image URLs as needed
   ];
 
+  const downloadImagesButton = document.getElementById('download-images-button');
   const outputDiv = document.getElementById('output');
-  const downloadButton = document.getElementById('download-images-button');
 
-  downloadButton.addEventListener('click', async () => {
-    outputDiv.innerHTML = ''; // Clear previous images
+  downloadImagesButton.addEventListener('click', () => {
+    // Map each image URL to a promise that resolves when the image is loaded
+    const promises = imageUrls.map(url => new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error(`Failed to load image's URL: ${url}`));
+      img.src = url;
+    }));
 
-    try {
-      const images = await downloadImages(imageUrls);
-      displayImages(images);
-    } catch (error) {
-      console.error('Error downloading images:', error);
-    }
-  });
+    // Use Promise.all to wait for all images to be downloaded
+    Promise.all(promises)
+      .then(images => {
+        // Clear existing content in output div
+        outputDiv.innerHTML = '';
 
-  function downloadImages(imageUrls) {
-    const promises = imageUrls.map(image => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = () => reject(`Failed to load image's URL: ${image.url}`);
-        img.src = image.url;
+        // Append each image to the output div
+        images.forEach(img => {
+          const imageItem = document.createElement('div');
+          imageItem.classList.add('image-item');
+          imageItem.appendChild(img);
+          outputDiv.appendChild(imageItem);
+        });
+      })
+      .catch(error => {
+        console.error('Error downloading images:', error);
       });
-    });
-
-    return Promise.all(promises);
-  }
-
-  function displayImages(images) {
-    images.forEach(image => {
-      const imgElement = document.createElement('img');
-      imgElement.src = image.src;
-      imgElement.alt = image.alt;
-      outputDiv.appendChild(imgElement);
-    });
-  }
+  });
 });
-
