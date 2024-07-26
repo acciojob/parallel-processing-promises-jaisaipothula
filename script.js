@@ -1,9 +1,8 @@
 document.getElementById('download-images-button').addEventListener('click', () => {
     const imageUrls = [
-        'https://via.placeholder.com/150',
-        'https://via.placeholder.com/200',
-        'https://via.placeholder.com/250'
-        // Add more URLs as needed
+        'https://picsum.photos/id/237/200/300',
+        'https://picsum.photos/id/238/200/300',
+        'https://picsum.photos/id/239/200/300'
     ];
 
     function downloadImage(url) {
